@@ -14,14 +14,12 @@ RUN apt-get update \
                              xvfb \
                              zip
 
-# Download wxWidgets source
-RUN curl --location \
-         http://downloads.sourceforge.net/project/wxwindows/2.6.4/wxGTK-2.6.4.tar.bz2 \
-    | tar --extract --bzip2 --directory /tmp
+# Pull in wxWidgets source
+COPY wx /tmp/wx
+RUN tar --extract --bzip2 --directory /tmp </tmp/wx/wxGTK-2.6.4.tar.bz2
 
 # Work around wxWidgets bug #10883
-RUN curl 'http://trac.wxwidgets.org/changeset/61009/svn-wx?format=diff&new=61009' \
-    | patch --strip 4 --directory /tmp/wxGTK-2.6.4
+RUN patch --strip 4 --directory /tmp/wxGTK-2.6.4 </tmp/wx/wx.patch
 
 # Import TreeMaker source
 COPY src /tmp/treemaker
